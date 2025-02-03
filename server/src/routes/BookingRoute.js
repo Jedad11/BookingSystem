@@ -1,6 +1,9 @@
 import express from "express"
-import {searchRooms} from "./model/Bookingmodel.js"
+import * as BookingController from '../controllers/BookingController.js'
 
-const Bookingroute = express.Router();
+const BookingRoute = express.Router();
 
-Bookingroute.get("/searchRoom",searchRooms)
+BookingRoute.get("/searchRoom",BookingController.searchRooms)
+BookingRoute.get("/reserveDetails",BookingController.getReserveDetails)
+
+export default BookingRoute;
