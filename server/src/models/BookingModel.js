@@ -1,4 +1,23 @@
-import db from "../configs/database.js";
+import db from "../configs/database.js"
+
+
+export const searchRooms = async (room_name) => {
+    const [response] = await db.promise().query(
+    `SELECT *
+    FROM rooms
+    WHERE room_name like ?`,[room_name]
+    )
+    return response;
+}
+
+export const searchBuilding = async (building_name) => {
+    const [response] = await db.promise().query(
+        `SELECT *
+        FROM buildings
+        WHERE building_name like ?`,[building_name]
+    )
+    return response;
+}
 
 
 export const getReserveDetails = async () => {
