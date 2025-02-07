@@ -1,7 +1,7 @@
 import express from "express"
 import connection from "./configs/database.js";
 const app = express();
-const port = 3000;
+const port = 8989;
 import BookingRoute from "./routes/BookingRoute.js";
 import cors from "cors"; // import cross origin security
 import { logger } from "./middlewares/BookingMiddleware.js";
