@@ -19,6 +19,25 @@ export const getReserveDetails = async (req,res) => {
     }
   };
 
+  export const addReport = async (req,res) => {
+    const reportData = req.body;
+    try {
+      const addReport= await bookingModel.addReport(reportData);
+      return res.json({
+        success: true,
+        data: addReport,
+        message: "reported successfully",
+      });
+    }catch (error) {
+      console.error("Error: ", error);
+      return res.status(500).json({
+        success: false,
+        data: null,
+        message: "Failed to report",
+      });
+    }
+  };
+
 export const createBooking = async (req, res) => {
       try {
           const bookingData = req.body;
@@ -37,9 +56,14 @@ export const createBooking = async (req, res) => {
           });
       }
   };
+
+
 // const room_name ="CB2308"
 
 export const searchRooms = async (req, res) => {
+  const room_name = req.body.room_name;
+  console.log(req.body.room_name);
+  
   try {
     const searchRoom = await bookingModel.searchRooms(room_name);
     return res.json({
@@ -53,6 +77,23 @@ export const searchRooms = async (req, res) => {
       success: false,
       data: null,
       message: "Failed to search room",
+  });
+}
+};
+export const displayRooms = async (req, res) => {
+  try {
+    const displayRoom = await bookingModel.displayRooms(room_name);
+    return res.json({
+      success: true,
+      data: displayRoom,
+      message: "Display room successfully",
+    });
+  }catch (error) {
+    console.error("Error: ", error);
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: "Failed to display room",
   });
 }
 };
@@ -76,29 +117,58 @@ export const searchBuilding = async (req, res) => {
 }
 };
 
-const report = {
-  room_name:"CB2301",
-  brief_description:"Hello Capibara", 
-  full_description:"activity", 
-  user_role:"Student", 
-  start_day:'2025-2-9', 
-  end_day:'2025-2-10'
-}
-
-export const addReports = async (req, res) => {
+export const deleteReserve = async (req, res) => {
+  const booking_id = req.body.booking_id;
   try {
-    const AddReport = await bookingModel.addReports(report);
+    const deleteReserve = await bookingModel.removeReserves(booking_id);
     return res.json({
       success: true,
-      data: AddReport,
-      message: "Add report successfully",
+      data: deleteReserve,
+      message: "Deletes reserve successfully",
     });
   }catch (error) {
     console.error("Error: ", error);
     return res.status(500).json({
       success: false,
       data: null,
-      message: "Failed to add report",
+      message: "Failed to deletes",
   });
 }
+};
+
+export const updateReserve = async (req, res) => {
+  const bkReserves = req.body
+  try {
+    const updateReserves = await bookingModel.updateBooking(bkReserves);
+    return res.json({
+      success: true,
+      data: updateReserves,
+      message: "Update reserve successfully",
+    });
+  }catch (error) {
+    console.error("Error: ", error);
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: "Failed to updates",
+  });
+}
+};
+
+export const getAllReserve = async (req,res) => {
+  try {
+    const AllReserveDetails = await bookingModel.getAllReserveDetails();
+    return res.json({
+      success: true,
+      data: AllReserveDetails,
+      message: "Reserve details retrieved successfully",
+    });
+  }catch (error) {
+    console.error("Error: ", error);
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: "Failed to retrieve Reserve details",
+    });
+  }
 };
