@@ -19,7 +19,6 @@ export const searchBuilding = async (building_name) => {
     return response;
 }
 
-
 export const getReserveDetails = async () => {
     const [response] = await db.promise().query( 
         `SELECT *

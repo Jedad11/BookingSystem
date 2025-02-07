@@ -15,7 +15,6 @@ export const getReserveDetails = async (req,res) => {
         success: false,
         data: null,
         message: "Failed to retrieve Reserve details",
-<<<<<<< HEAD
       });
     }
   };
@@ -38,13 +37,7 @@ export const createBooking = async (req, res) => {
           });
       }
   };
-  
-=======
-    });
-  }
-};
-
-const room_name ="CB2308"
+// const room_name ="CB2308"
 
 export const searchRooms = async (req, res) => {
   try {
@@ -82,4 +75,30 @@ export const searchBuilding = async (req, res) => {
   });
 }
 };
->>>>>>> 20b4c45ce672612912466df5509f3c7a7528cb64
+
+const report = {
+  room_name:"CB2301",
+  brief_description:"Hello Capibara", 
+  full_description:"activity", 
+  user_role:"Student", 
+  start_day:'2025-2-9', 
+  end_day:'2025-2-10'
+}
+
+export const addReports = async (req, res) => {
+  try {
+    const AddReport = await bookingModel.addReports(report);
+    return res.json({
+      success: true,
+      data: AddReport,
+      message: "Add report successfully",
+    });
+  }catch (error) {
+    console.error("Error: ", error);
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: "Failed to add report",
+  });
+}
+};

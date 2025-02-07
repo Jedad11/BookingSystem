@@ -7,5 +7,6 @@ BookingRoute.get("/searchRoom",BookingController.searchRooms)
 BookingRoute.get("/searchBuilding",BookingController.searchBuilding)
 BookingRoute.get("/reserveDetails",BookingController.getReserveDetails)
 BookingRoute.post("/booking",BookingController.createBooking)
+BookingRoute.post("/addReport",BookingController.addReports)
 
 export default BookingRoute;
