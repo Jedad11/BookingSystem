@@ -62,10 +62,12 @@ export const createBooking = async (req, res) => {
 
 export const searchRooms = async (req, res) => {
   const room_name = req.body.room_name;
-  console.log(req.body.room_name);
+  console.log(req.body);
   
   try {
     const searchRoom = await bookingModel.searchRooms(room_name);
+    console.log(searchRoom);
+    
     return res.json({
       success: true,
       data: searchRoom,
@@ -98,10 +100,12 @@ export const displayRooms = async (req, res) => {
 }
 };
 
-const building_name = "CB2"
-export const searchBuilding = async (req, res) => {
+export const searchBuildings = async (req, res) => {
+  const room_name = req.body.building_name;
+  console.log(req.body);
+  
   try {
-    const searchBuilding = await bookingModel.searchBuilding(building_name);
+    const searchBuilding = await bookingModel.searchBuildings(room_name);
     return res.json({
       success: true,
       data: searchBuilding,
@@ -113,6 +117,25 @@ export const searchBuilding = async (req, res) => {
       success: false,
       data: null,
       message: "Failed to search building",
+  });
+}
+};
+
+const building_name = "CB2"
+export const displayBuildings = async (req, res) => {
+  try {
+    const displayBuilding = await bookingModel.displayBuildings(building_name);
+    return res.json({
+      success: true,
+      data: displayBuilding,
+      message: "Display building successfully",
+    });
+  }catch (error) {
+    console.error("Error: ", error);
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: "Failed to display building",
   });
 }
 };

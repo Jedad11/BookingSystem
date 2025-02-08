@@ -11,13 +11,24 @@ export const displayRooms = async (room_name) => {
 }
 
 export const searchRooms = async (room_name) => {
+    const searchTerm = `${room_name}%`;
+    const [response] = await db.promise().query(
+        
+    `SELECT *
+    FROM rooms
+    WHERE room_name LIKE ?`, [searchTerm]
+    )
+    return response;
+}
+
+export const searchBuildings = async (room_name) => {
     const [response] = await db.promise().query(
     `SELECT *
-    FROM rooms`
+    FROM buildings`
     )
     return ;
 }
-export const searchBuilding = async (building_name) => {
+export const displayBuildings = async (building_name) => {
     const [response] = await db.promise().query(
         `SELECT *
         FROM buildings
@@ -55,8 +66,7 @@ export const getAllReserveDetails = async () => {
 export const BookingReserves = async (bkReserves) => {
     const {
         booking_title, booking_date, booking_create, room_name,
-        start_time, end_time, repeat_type, repeat_day,
-        user_id, user_firstname, user_lastname, user_email, user_tel, user_role, user_department
+        start_time, end_time ,user_id, user_firstname, user_lastname, user_email, user_tel, user_role
     } = bkReserves;
 
     try {
@@ -90,13 +100,13 @@ export const BookingReserves = async (bkReserves) => {
         const insertBookingQuery = `
             INSERT INTO booking
             (room_name, booking_title, booking_date, 
-            user_id, user_firstname, user_lastname, user_email, user_tel, user_role, user_department)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            user_id, user_firstname, user_lastname, user_email, user_tel, user_role)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         `;
 
         const bookingValues = [
             room_name, booking_title, booking_date,
-            user_id, user_firstname, user_lastname, user_email, user_tel, user_role, user_department
+            user_id, user_firstname, user_lastname, user_email, user_tel, user_role
         ];
 
         const [bookingResponse] = await db.promise().query(insertBookingQuery, bookingValues);
@@ -108,11 +118,11 @@ export const BookingReserves = async (bkReserves) => {
 
         const insertDetailQuery = `
         INSERT INTO booking_detail 
-        (booking_id, booking_createAt, start_time, end_time, duration, repeat_type, repeat_day)
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        (booking_id, booking_createAt, start_time, end_time, duration)
+        VALUES (?, ?, ?, ?, ?);
         `;
 
-        const bookingDetailValues = [booking_id, booking_create, start_time, end_time, duration, repeat_type, repeat_day];
+        const bookingDetailValues = [booking_id, booking_create, start_time, end_time, duration];
 
         await db.promise().query(insertDetailQuery, bookingDetailValues);
 
@@ -141,8 +151,8 @@ export const removeReserves = async (booking_id) => {
 export const updateBooking = async (bkReserves) => {
     const {
         booking_title, booking_date, booking_create, room_name,
-        start_time, end_time, repeat_type, repeat_day,
-        user_id, user_firstname, user_lastname, user_email, user_tel, user_role, user_department
+        start_time, end_time,
+        user_id, user_firstname, user_lastname, user_email, user_tel, user_role
     } = bkReserves;
 
     try {
@@ -184,14 +194,13 @@ export const updateBooking = async (bkReserves) => {
             user_email = ?, 
             user_tel = ?, 
             user_role = ?, 
-            user_department = ?
         WHERE booking_id = ?;
         `;
 
         const bookingValues = [
             booking_id,
             room_name, booking_title, booking_date,
-            user_id, user_firstname, user_lastname, user_email, user_tel, user_role, user_department
+            user_id, user_firstname, user_lastname, user_email, user_tel, user_role
         ];
 
         const [bookingResponse] = await db.promise().query(updateBookingQuery, bookingValues);
@@ -204,11 +213,11 @@ export const updateBooking = async (bkReserves) => {
 
         const insertDetailQuery = `
         INSERT INTO booking_detail 
-        (booking_id, booking_createAt, start_time, end_time, duration, repeat_type, repeat_day)
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        (booking_id, booking_createAt, start_time, end_time, duration)
+        VALUES (?, ?, ?, ?, ?);
         `;
 
-        const bookingDetailValues = [booking_id, booking_create, start_time, end_time, duration, repeat_type, repeat_day];
+        const bookingDetailValues = [booking_id, booking_create, start_time, end_time, duration];
 
         await db.promise().query(insertDetailQuery, bookingDetailValues);
 
