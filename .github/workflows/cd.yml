@@ -56,9 +56,13 @@ jobs:
       - name: Install dependencies on server
         run: |
           sshpass -p $REMOTE_SSH_PASSWORD ssh $REMOTE_SSH_ARGS -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "
+          set -xe  # เพิ่มเพื่อแสดงคำสั่งและ error ที่ละเอียดขึ้น
           cd ~/hippo-backend/server &&
           export NVM_DIR=\$HOME/.nvm &&
-          [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" &&
+          [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" ||
+          echo '❌ NVM not loaded' &&
+          node -v || echo '❌ Node.js not found' &&
+          npm -v || echo '❌ NPM not found' &&
           npm ci
           "
 
