@@ -127,7 +127,6 @@ export const searchBuildings = async (req, res) => {
   try {
     const searchBuilding = await bookingModel.searchBuildings(building_name);
     console.log(searchBuilding);
-    
     return res.json({
       success: true,
       data: searchBuilding,

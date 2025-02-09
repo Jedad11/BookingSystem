@@ -45,7 +45,6 @@ export const searchBuildings = async (building_name) => {
   return response;
 };
 
-
 export const displayBuildings = async (building_name) => {
   const [response] = await db.promise().query(
     `SELECT *
@@ -284,7 +283,6 @@ export const updateBooking = async (bkReserves) => {
           "Booking conflict detected. Please choose a different time slot.",
       };
     }
-
 
     // **2. Update Booking Information**
     const updateBookingQuery = `
