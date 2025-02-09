@@ -12,6 +12,7 @@ export const displayRooms = async (room_name) => {
   return response;
 };
 
+
 export const searchRooms = async (room_name) => {
   const searchTerm = `${room_name}%`;
   const [response] = await db.promise().query(
@@ -23,6 +24,7 @@ export const searchRooms = async (room_name) => {
   return response;
 };
 
+
 export const findAllRooms = async () => {
   const [response] = await db.promise().query(
     `SELECT *
@@ -30,6 +32,7 @@ export const findAllRooms = async () => {
   );
   return response;
 };
+
 
 export const searchBuildings = async (building_name) => {
   const searchTerm = `${building_name}%`;
@@ -41,6 +44,8 @@ export const searchBuildings = async (building_name) => {
   );
   return response;
 };
+
+
 export const displayBuildings = async (building_name) => {
   const [response] = await db.promise().query(
     `SELECT *
@@ -50,6 +55,7 @@ export const displayBuildings = async (building_name) => {
   );
   return response;
 };
+
 
 export const addReport = async (reportData) => {
   const {
@@ -75,6 +81,7 @@ export const addReport = async (reportData) => {
     );
 };
 
+
 export const getReserveDetails = async () => {
   const [response] = await db.promise().query(
     `SELECT *
@@ -84,6 +91,7 @@ export const getReserveDetails = async () => {
   return response;
 };
 
+
 export const getAllReserveDetails = async () => {
   const [response] = await db.promise().query(
     `SELECT *
@@ -91,6 +99,7 @@ export const getAllReserveDetails = async () => {
   );
   return response;
 };
+
 
 export const BookingReserves = async (bkReserves) => {
   const {
@@ -206,6 +215,7 @@ export const BookingReserves = async (bkReserves) => {
   }
 };
 
+
 export const removeReserves = async (booking_id) => {
   await db.promise().query(
     `DELETE booking_detail  FROM booking_detail
@@ -275,6 +285,7 @@ export const updateBooking = async (bkReserves) => {
       };
     }
 
+
     // **2. Update Booking Information**
     const updateBookingQuery = `
         UPDATE booking
@@ -327,6 +338,7 @@ export const updateBooking = async (bkReserves) => {
       )}:00`;
     }
 
+    
     const duration = minutesToTime(durationMin);
 
     const updateDetailQuery = `
