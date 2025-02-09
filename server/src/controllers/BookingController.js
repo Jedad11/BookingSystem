@@ -21,6 +21,8 @@ export const getReserveDetails = async (req,res) => {
 
   export const addReport = async (req,res) => {
     const reportData = req.body;
+    // console.log(reportData);
+    
     try {
       const addReport= await bookingModel.addReport(reportData);
       return res.json({
@@ -42,6 +44,8 @@ export const createBooking = async (req, res) => {
       try {
           const bookingData = req.body;
           const response = await bookingModel.BookingReserves(bookingData);
+          console.log(bookingData);
+          
   
           if (!response.success) {
               return res.status(400).json(response); // Conflict or error
@@ -101,11 +105,11 @@ export const displayRooms = async (req, res) => {
 };
 
 export const searchBuildings = async (req, res) => {
-  const room_name = req.body.building_name;
-  console.log(req.body);
+  const building_name = req.body.building_name;
+  console.log(building_name);
   
   try {
-    const searchBuilding = await bookingModel.searchBuildings(room_name);
+    const searchBuilding = await bookingModel.searchBuildings(building_name);
     return res.json({
       success: true,
       data: searchBuilding,

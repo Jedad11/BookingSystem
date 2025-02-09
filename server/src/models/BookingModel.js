@@ -21,12 +21,14 @@ export const searchRooms = async (room_name) => {
     return response;
 }
 
-export const searchBuildings = async (room_name) => {
+export const searchBuildings = async (building_name) => {
+    const searchTerm = `${building_name}%`;
     const [response] = await db.promise().query(
     `SELECT *
-    FROM buildings`
+    FROM buildings
+    WHERE building_name LIKE ?`, [searchTerm]
     )
-    return ;
+    return response;
 }
 export const displayBuildings = async (building_name) => {
     const [response] = await db.promise().query(
@@ -38,10 +40,10 @@ export const displayBuildings = async (building_name) => {
 }
 
 export const addReport = async (reportData) => {
-    const {room_name, brief_description, full_description,user_role,start_day,end_day} = reportData;
+    const {room_name, create_by,full_description,user_role,start_day,end_day,start_time,end_time} = reportData;
     const [response] = await db.promise().query(
-        `INSERT INTO reports (room_name, brief_description, full_description,user_role,start_day,end_day) VALUES (?, ?, ?,?,?,?)`,
-        [room_name, brief_description, full_description, user_role, start_day, end_day]
+        `INSERT INTO reports (room_name, create_by,full_description,user_role,start_day,end_day,start_time,end_time) VALUES (?,?, ?,?,?,?,?,?)`,
+        [room_name, create_by,full_description, user_role, start_day, end_day,start_time,end_time]
     );
 }
 
@@ -150,7 +152,7 @@ export const removeReserves = async (booking_id) => {
 
 export const updateBooking = async (bkReserves) => {
     const {
-        booking_title, booking_date, booking_create, room_name,
+        booking_id, booking_title, booking_date, booking_create, room_name,
         start_time, end_time,
         user_id, user_firstname, user_lastname, user_email, user_tel, user_role
     } = bkReserves;
@@ -169,8 +171,7 @@ export const updateBooking = async (bkReserves) => {
                 (bd.start_time >= ? AND bd.start_time < ?)  -- New booking starts inside existing
                 OR
                 (bd.end_time > ? AND bd.end_time <= ?)  -- New booking ends inside existing
-);
-
+            );
         `;
 
         const [existingBookings] = await db.promise().query(checkQuery, [
@@ -182,6 +183,7 @@ export const updateBooking = async (bkReserves) => {
             return { success: false, message: "Booking conflict detected. Please choose a different time slot." };
         }
 
+        // **2. Update Booking Information**
         const updateBookingQuery = `
         UPDATE booking
         SET 
@@ -193,36 +195,44 @@ export const updateBooking = async (bkReserves) => {
             user_lastname = ?, 
             user_email = ?, 
             user_tel = ?, 
-            user_role = ?, 
+            user_role = ?
         WHERE booking_id = ?;
         `;
 
         const bookingValues = [
-            booking_id,
             room_name, booking_title, booking_date,
-            user_id, user_firstname, user_lastname, user_email, user_tel, user_role
+            user_id, user_firstname, user_lastname, user_email, user_tel, user_role,
+            booking_id
         ];
 
         const [bookingResponse] = await db.promise().query(updateBookingQuery, bookingValues);
-        const booking_id = bookingResponse.insertId;
 
-        // **3. Insert into `booking_detail` Table**
+        if (bookingResponse.affectedRows === 0) {
+            return { success: false, message: "No booking found to update." };
+        }
+
+        // **3. Update `booking_detail` Table**
         const durationMin = (new Date(`1970-01-01T${end_time}Z`) - new Date(`1970-01-01T${start_time}Z`)) / 60000;
 
-        const duration = minutesToTime(90); // Converts 90 → "01:30:00"
+        function minutesToTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}:00`;
+        }
 
-        const insertDetailQuery = `
-        INSERT INTO booking_detail 
-        (booking_id, booking_createAt, start_time, end_time, duration)
-        VALUES (?, ?, ?, ?, ?);
+        const duration = minutesToTime(durationMin);
+
+        const updateDetailQuery = `
+        UPDATE booking_detail 
+        SET booking_createAt = ?, start_time = ?, end_time = ?, duration = ?
+        WHERE booking_id = ?;
         `;
 
-        const bookingDetailValues = [booking_id, booking_create, start_time, end_time, duration];
+        const bookingDetailValues = [booking_create, start_time, end_time, duration, booking_id];
 
-        await db.promise().query(insertDetailQuery, bookingDetailValues);
+        await db.promise().query(updateDetailQuery, bookingDetailValues);
 
-
-        return { success: true, message: "Booking confirmed!", booking_id };
+        return { success: true, message: "Booking updated successfully!", booking_id };
     } catch (error) {
         console.error("Database error:", error);
         return { success: false, message: "Database error. Please try again later." };
